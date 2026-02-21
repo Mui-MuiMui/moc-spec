@@ -1,6 +1,6 @@
 # .moc File Format Specification
 
-[日本語](READNE_JP.md)
+[日本語](README_JP.md)
 
 - **Version:** 1.0.0
 - **Status:** Official Specification
