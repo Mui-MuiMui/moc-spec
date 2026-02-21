@@ -2,15 +2,15 @@
 
 [日本語](READNE_JP.md)
 
-**Version:** 1.0.0
-**Status:** Official Specification
+- **Version:** 1.0.0
+- **Status:** Official Specification
 
 ---
 
 ## 1. Overview
 
-The `.moc` file is a definition format for GUI mockups created with the VSCode extension "Mocker."
-Based on TSX (TypeScript JSX), it is an integrated data format designed for seamless collaboration between **Humans**, **GUIs**, and **AI Agents**.
+- The `.moc` file is a definition format for GUI mockups created with the VSCode extension "Mocker."
+- Based on TSX (TypeScript JSX), it is an integrated data format designed for seamless collaboration between **Humans**, **GUIs**, and **AI Agents**.
 
 ### Tech Stack
 
