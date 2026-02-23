@@ -79,6 +79,11 @@ Metadata is written using `@moc-*` tags inside a JSDoc comment at the top of the
  *   craftState takes precedence over the TSX code.
  *   TSX is derivative data auto-generated from craftState, provided as a readable
  *   reference for AI agents. To change the component layout, use the GUI editor.
+ *   (When edited via GUI, the craftState content is also overwritten into the TSX.)
+ *
+ * AI Reading Priority:
+ *   1. TSX code (primary source for structure and layout; for human/AI readability)
+ *   2. craftState (reference for detailed GUI editor properties)
  *
  * Metadata:
  *   @moc-version  - Document format version (required)
@@ -179,8 +184,7 @@ const __mocEditorData = `
 {
   "craftState": { ... },
   "memos": [ ... ],
-  "viewport": { ... },
-  "intent": "..."
+  "viewport": { ... }
 }
 `;
 ```
@@ -192,7 +196,6 @@ const __mocEditorData = `
 | `craftState` | **Required** | `Record<string, unknown>` | Craft.js node tree |
 | `memos` | **Required** | `MocEditorMemo[]` | Complete data for sticky-note memos |
 | `viewport` | Optional | `{ mode, width, height }` | Viewport settings |
-| `intent` | Optional | `string` | Purpose and intent of the page (mirrors `@moc-intent`) |
 
 ### 6.3 Escape Rules
 
@@ -264,8 +267,6 @@ Legacy-format files may not be correctly parsed by newer-version parsers.
  * @moc-layout flow
  * @moc-viewport desktop
  *
- * @moc-memo #loginButton "Submit button for login action"
- * @moc-memo #emailInput "Email validation required"
  */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -302,8 +303,7 @@ const __mocEditorData = `
     "mode": "desktop",
     "width": 1280,
     "height": 800
-  },
-  "intent": "Login form mockup"
+  }
 }
 `;
 ```

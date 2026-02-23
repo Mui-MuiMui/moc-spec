@@ -78,6 +78,11 @@
  *   TSXコードよりcraftStateが正となります。
  *   TSXはcraftStateから自動生成される派生データであり、AIがページ構造を
  *   読み取るための参照用です。コンポーネントの配置変更はGUIで行ってください。
+ *   (GUIで編集した場合、craftStateの内容がtsxにも上書きされます。)
+ *
+ * AI読み取り優先順位:
+ *   1. TSXコード（構造・レイアウトの主軸 読み手理解用）
+ *   2. craftState（GUIエディタの詳細プロパティ参照用）
  *
  * メタデータ:
  *   @moc-version  - ドキュメント形式バージョン（必須）
@@ -178,8 +183,7 @@ const __mocEditorData = `
 {
   "craftState": { ... },
   "memos": [ ... ],
-  "viewport": { ... },
-  "intent": "..."
+  "viewport": { ... }
 }
 `;
 ```
@@ -191,7 +195,6 @@ const __mocEditorData = `
 | `craftState` | **必須** | `Record<string, unknown>` | Craft.jsノードツリー |
 | `memos` | **必須** | `MocEditorMemo[]` | 付箋メモの完全データ |
 | `viewport` | 任意 | `{ mode, width, height }` | ビューポート設定 |
-| `intent` | 任意 | `string` | ページの目的・意図（`@moc-intent` と同期） |
 
 ### 6.3 エスケープ規則
 
@@ -263,8 +266,6 @@ const __mocEditorData = `
  * @moc-layout flow
  * @moc-viewport desktop
  *
- * @moc-memo #loginButton "Submit button for login action"
- * @moc-memo #emailInput "Email validation required"
  */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -301,8 +302,7 @@ const __mocEditorData = `
     "mode": "desktop",
     "width": 1280,
     "height": 800
-  },
-  "intent": "Login form mockup"
+  }
 }
 `;
 ```
