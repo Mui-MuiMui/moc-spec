@@ -1,5 +1,5 @@
 # .moc ファイル形式仕様書
-[English](READNE_JP.md)
+[English](README.md)
 
 - **バージョン:** 1.0.0
 - **ステータス:** 正式仕様
@@ -76,8 +76,8 @@
  * SSOT（Single Source of Truth）:
  *   GUIエディタの状態（craftState）が末尾のエディタデータに存在する場合、
  *   TSXコードよりcraftStateが正となります。
- *   TSXはcraftStateから自動生成される派生データです。
- *   AIエージェントがTSXを編集した場合、GUIエディタ側でcraftStateが再構築されます。
+ *   TSXはcraftStateから自動生成される派生データであり、AIがページ構造を
+ *   読み取るための参照用です。コンポーネントの配置変更はGUIで行ってください。
  *
  * メタデータ:
  *   @moc-version  - ドキュメント形式バージョン（必須）
@@ -178,7 +178,8 @@ const __mocEditorData = `
 {
   "craftState": { ... },
   "memos": [ ... ],
-  "viewport": { ... }
+  "viewport": { ... },
+  "intent": "..."
 }
 `;
 ```
@@ -190,6 +191,7 @@ const __mocEditorData = `
 | `craftState` | **必須** | `Record<string, unknown>` | Craft.jsノードツリー |
 | `memos` | **必須** | `MocEditorMemo[]` | 付箋メモの完全データ |
 | `viewport` | 任意 | `{ mode, width, height }` | ビューポート設定 |
+| `intent` | 任意 | `string` | ページの目的・意図（`@moc-intent` と同期） |
 
 ### 6.3 エスケープ規則
 
@@ -299,7 +301,8 @@ const __mocEditorData = `
     "mode": "desktop",
     "width": 1280,
     "height": 800
-  }
+  },
+  "intent": "Login form mockup"
 }
 `;
 ```

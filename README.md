@@ -77,8 +77,8 @@ Metadata is written using `@moc-*` tags inside a JSDoc comment at the top of the
  * SSOT (Single Source of Truth):
  *   If GUI editor state (craftState) exists in the editor data at the end of the file,
  *   craftState takes precedence over the TSX code.
- *   TSX is derivative data auto-generated from craftState.
- *   When an AI agent edits the TSX, the GUI editor will reconstruct the craftState.
+ *   TSX is derivative data auto-generated from craftState, provided as a readable
+ *   reference for AI agents. To change the component layout, use the GUI editor.
  *
  * Metadata:
  *   @moc-version  - Document format version (required)
@@ -179,7 +179,8 @@ const __mocEditorData = `
 {
   "craftState": { ... },
   "memos": [ ... ],
-  "viewport": { ... }
+  "viewport": { ... },
+  "intent": "..."
 }
 `;
 ```
@@ -191,6 +192,7 @@ const __mocEditorData = `
 | `craftState` | **Required** | `Record<string, unknown>` | Craft.js node tree |
 | `memos` | **Required** | `MocEditorMemo[]` | Complete data for sticky-note memos |
 | `viewport` | Optional | `{ mode, width, height }` | Viewport settings |
+| `intent` | Optional | `string` | Purpose and intent of the page (mirrors `@moc-intent`) |
 
 ### 6.3 Escape Rules
 
@@ -300,7 +302,8 @@ const __mocEditorData = `
     "mode": "desktop",
     "width": 1280,
     "height": 800
-  }
+  },
+  "intent": "Login form mockup"
 }
 `;
 ```
