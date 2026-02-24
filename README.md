@@ -9,7 +9,7 @@
 
 ## 1. Overview
 
-- The `.moc` file is a definition format for GUI mockups created with the VSCode extension "Mocker."
+- The `.moc` file is a definition format for GUI mockups created with the VSCode extension "Momoc."
 - Based on TSX (TypeScript JSX), it is an integrated data format designed for seamless collaboration between **Humans**, **GUIs**, and **AI Agents**.
 
 ### Tech Stack
@@ -57,8 +57,8 @@ Metadata is written using `@moc-*` tags inside a JSDoc comment at the top of the
 
 ```typescript
 /**
- * Mocker Document (.moc)
- * A definition file for GUI mockups created with the VSCode extension "Mocker."
+ * Momoc Document (.moc)
+ * A definition file for GUI mockups created with the VSCode extension "Momoc."
  * An integrated data format for collaborative development between Humans, GUIs, and AI Agents.
  *
  * File Structure:
@@ -255,8 +255,8 @@ Legacy-format files may not be correctly parsed by newer-version parsers.
 
 ```typescript
 /**
- * Mocker Document (.moc)
- * A definition file for GUI mockups created with the VSCode extension "Mocker."
+ * Momoc Document (.moc)
+ * A definition file for GUI mockups created with the VSCode extension "Momoc."
  * An integrated data format for collaborative development between Humans, GUIs, and AI Agents.
  *
  * ...(header description omitted)...

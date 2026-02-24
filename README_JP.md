@@ -8,7 +8,7 @@
 
 ## 1. 概要
 
-- `.moc` ファイルは、VSCode拡張「Mocker」で作成されるGUIモックアップの定義ファイルです。  
+- `.moc` ファイルは、VSCode拡張「Momoc」で作成されるGUIモックアップの定義ファイルです。  
 - TSX（TypeScript JSX）形式をベースとし、人間・GUI・AIエージェントが協調して開発を行うための統合データ形式です。
 
 ### 技術スタック
@@ -56,8 +56,8 @@
 
 ```typescript
 /**
- * Mocker Document (.moc)
- * VSCode拡張「Mocker」で作成されたGUIモックアップの定義ファイルです。
+ * Momoc Document (.moc)
+ * VSCode拡張「Momoc」で作成されたGUIモックアップの定義ファイルです。
  * 人間・GUI・AIエージェントが協調して開発を行うための統合データ形式です。
  *
  * ファイル構造:
@@ -254,8 +254,8 @@ const __mocEditorData = `
 
 ```typescript
 /**
- * Mocker Document (.moc)
- * VSCode拡張「Mocker」で作成されたGUIモックアップの定義ファイルです。
+ * Momoc Document (.moc)
+ * VSCode拡張「Momoc」で作成されたGUIモックアップの定義ファイルです。
  * 人間・GUI・AIエージェントが協調して開発を行うための統合データ形式です。
  *
  * ...（ヘッダー説明文省略）...
