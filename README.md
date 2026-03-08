@@ -2,8 +2,15 @@
 
 [日本語](README_JP.md)
 
-- **Version:** 1.0.0
+- **Version:** 1.1.0
 - **Status:** Official Specification
+
+### Version History
+
+| Version | Changes |
+|---------|---------|
+| 1.1.0 | Added `@moc-component` tag — embeds component prop schemas in the file header, making each file self-contained for AI agents |
+| 1.0.0 | Initial official release |
 
 ---
 
@@ -114,8 +121,48 @@ Metadata is written using `@moc-*` tags inside a JSDoc comment at the top of the
 | `@moc-layout` | Optional | `"flow" \| "absolute"` | `"flow"` | Layout mode |
 | `@moc-viewport` | Optional | `string` | `"desktop"` | `desktop`, `tablet`, `mobile`, or `WxH` format |
 | `@moc-memo` | Optional | - | - | AI instruction memo (multiple allowed) |
+| `@moc-component` | Optional | `string` (JSON) | - | Component prop schema (multiple allowed, one per component type) |
 
-### 3.3 AI Instruction Memos (@moc-memo)
+### 3.3 Component Schemas (@moc-component) — v1.1.0
+
+```
+@moc-component <componentName> <schemaJSON>
+```
+
+- `<componentName>`: The internal Momoc component name (e.g., `CraftButton`, `CraftDataTable`)
+- `<schemaJSON>`: A JSON object describing the component's prop schema
+
+**JSON structure:**
+
+```typescript
+{
+  "displayName": string,           // Human-readable component label
+  "props": {
+    "<propName>": {
+      "type": string,              // Primitive ("string" | "boolean" | "number"),
+                                   // union ("optA|optB|optC"),
+                                   // or special ("JSON string" | "CSV string")
+      "default": unknown           // Default value from the component definition
+    }
+  }
+}
+```
+
+**Example:**
+
+```
+@moc-component CraftButton {"displayName":"Button","props":{"text":{"type":"string","default":"Button"},"variant":{"type":"default|destructive|outline|secondary|ghost|link","default":"default"},"disabled":{"type":"boolean","default":false}}}
+```
+
+**Output rules:**
+- Only components actually used in the `craftState` are included
+- Internal slot components (e.g., `TableCellSlot`, `ResizablePanelSlot`) are excluded
+- Tags are sorted alphabetically by component name
+- This tag is omitted when no `editorData` (craftState) is present
+
+AI agents should use these schemas to interpret `craftState` node props without needing external documentation.
+
+### 3.4 AI Instruction Memos (@moc-memo)
 
 ```
 @moc-memo #<targetElementId> "instruction text"

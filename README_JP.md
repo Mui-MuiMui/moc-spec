@@ -1,8 +1,15 @@
 # .moc ファイル形式仕様書
 [English](README.md)
 
-- **バージョン:** 1.0.0
+- **バージョン:** 1.1.0
 - **ステータス:** 正式仕様
+
+### バージョン履歴
+
+| バージョン | 変更内容 |
+|-----------|---------|
+| 1.1.0 | `@moc-component` タグを追加 — コンポーネントのpropsスキーマをファイルヘッダーに埋め込み、ファイル単体でAIエージェントが自己完結して読めるようにする |
+| 1.0.0 | 初回正式リリース |
 
 ---
 
@@ -113,8 +120,48 @@
 | `@moc-layout` | 任意 | `"flow" \| "absolute"` | `"flow"` | レイアウトモード |
 | `@moc-viewport` | 任意 | `string` | `"desktop"` | `desktop`, `tablet`, `mobile`, または `WxH` 形式 |
 | `@moc-memo` | 任意 | - | - | AI指示メモ（複数可） |
+| `@moc-component` | 任意 | `string`（JSON） | - | コンポーネントのpropsスキーマ（複数可、コンポーネント種別ごとに1つ） |
 
-### 3.3 AI指示メモ (@moc-memo)
+### 3.3 コンポーネントスキーマ (@moc-component) — v1.1.0
+
+```
+@moc-component <コンポーネント名> <スキーマJSON>
+```
+
+- `<コンポーネント名>`: Momoc内部のコンポーネント名（例: `CraftButton`, `CraftDataTable`）
+- `<スキーマJSON>`: コンポーネントのpropsスキーマを記述したJSONオブジェクト
+
+**JSONの構造:**
+
+```typescript
+{
+  "displayName": string,           // 人間向けの表示名
+  "props": {
+    "<propName>": {
+      "type": string,              // プリミティブ ("string" | "boolean" | "number")、
+                                   // Union型 ("optA|optB|optC")、
+                                   // または特殊型 ("JSON string" | "CSV string")
+      "default": unknown           // コンポーネント定義のデフォルト値
+    }
+  }
+}
+```
+
+**出力例:**
+
+```
+@moc-component CraftButton {"displayName":"Button","props":{"text":{"type":"string","default":"Button"},"variant":{"type":"default|destructive|outline|secondary|ghost|link","default":"default"},"disabled":{"type":"boolean","default":false}}}
+```
+
+**出力ルール:**
+- `craftState` で実際に使用されているコンポーネントのみ出力する
+- 内部スロットコンポーネント（`TableCellSlot`、`ResizablePanelSlot` など）は除外する
+- コンポーネント名のアルファベット順でソートして出力する
+- `editorData`（craftState）が存在しない場合はタグを出力しない
+
+AIエージェントはこのスキーマを参照して `craftState` の各ノードのpropsを外部ドキュメントなしに解釈できます。
+
+### 3.4 AI指示メモ (@moc-memo)
 
 ```
 @moc-memo #<対象要素ID> "指示テキスト"
