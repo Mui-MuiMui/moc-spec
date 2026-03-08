@@ -23,6 +23,7 @@
 - **CSS**: Tailwind CSS v4（ユーティリティファーストCSS）
 - **UIコンポーネント**: shadcn/ui（Radix UI + Tailwind CSSベース）
 - importパス `@/components/ui/*` はshadcn/uiコンポーネントを指す
+- **アイコン**: lucide-react（アイコン使用時のみ importブロックに `lucide-react` が現れる）
 - 導入先にTailwind CSSやshadcn/uiがない場合は、導入先の技術スタックで同等の見た目・レイアウトを再現すること
 
 ### 設計原則
@@ -77,6 +78,7 @@
  *   CSS: Tailwind CSS v4（ユーティリティファーストCSS）
  *   UIコンポーネント: shadcn/ui（Radix UI + Tailwind CSSベース）
  *   importパス「@/components/ui/*」はshadcn/uiコンポーネントです。
+ *   アイコン: lucide-react（importパス「lucide-react」）※アイコン使用時のみ
  *   導入先にTailwind CSSやshadcn/uiがない場合は、
  *   導入先の技術スタックで同等の見た目・レイアウトを再現してください。
  *

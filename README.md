@@ -24,6 +24,7 @@
 - **CSS**: Tailwind CSS v4 (Utility-first CSS)
 - **UI Components**: shadcn/ui (Radix UI + Tailwind CSS)
 - Import path `@/components/ui/*` refers to shadcn/ui components.
+- **Icons**: lucide-react (appears in the import block only when icons are used)
 - If the target environment does not support Tailwind CSS or shadcn/ui, reproduce equivalent visuals and layouts using the available tech stack.
 
 ### Design Principles
@@ -78,6 +79,7 @@ Metadata is written using `@moc-*` tags inside a JSDoc comment at the top of the
  *   CSS: Tailwind CSS v4 (Utility-first CSS)
  *   UI Components: shadcn/ui (Radix UI + Tailwind CSS)
  *   The import path "@/components/ui/*" refers to shadcn/ui components.
+ *   Icons: lucide-react (import path "lucide-react", appears only when icons are used)
  *   If the target environment does not support Tailwind CSS or shadcn/ui,
  *   reproduce equivalent visuals and layouts using the available tech stack.
  *
