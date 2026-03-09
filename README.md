@@ -2,13 +2,14 @@
 
 [日本語](README_JP.md)
 
-- **Version:** 1.1.0
+- **Version:** 1.2.0
 - **Status:** Official Specification
 
 ### Version History
 
 | Version | Changes |
 |---------|---------|
+| 1.2.0 | Editor data block is now Brotli-compressed + Base64-encoded — drastically reduces file size for large craftState and prevents AI agents from accidentally reading raw JSON |
 | 1.1.0 | Added `@moc-component` tag — embeds component prop schemas in the file header, making each file self-contained for AI agents |
 | 1.0.0 | Initial official release |
 
@@ -226,7 +227,25 @@ These comments serve as supplementary information for AI agents to understand th
 A block for saving the internal state of the GUI editor.
 Stored as a template literal variable at the end of the file.
 
-### 6.1 Format
+### 6.1 Format (v1.2.0 — Brotli Compressed)
+
+Since v1.2.0, the editor data is Brotli-compressed and Base64-encoded:
+
+```typescript
+const __mocEditorData = `brotli:<base64-encoded-data>`;
+```
+
+The `brotli:` prefix identifies the compression format. The data after the prefix is a Base64-encoded Brotli-compressed JSON string containing the editor state.
+
+**Encoding process:** `JSON.stringify(data)` → `brotliCompress` → `Base64 encode` → prepend `brotli:`
+
+**Decoding process:** Remove `brotli:` prefix → `Base64 decode` → `brotliDecompress` → `JSON.parse`
+
+AI agents do **not** need to read this data directly. Use the TSX code and `@moc-component` schemas to understand the page structure.
+
+### 6.1.1 Legacy Format (v1.0.0–1.1.0)
+
+In earlier versions, the editor data was stored as raw JSON inside the template literal:
 
 ```typescript
 const __mocEditorData = `
@@ -238,6 +257,8 @@ const __mocEditorData = `
 `;
 ```
 
+Parsers should support both formats: if the content starts with `brotli:`, use Brotli decompression; otherwise, treat it as raw JSON with escape handling.
+
 ### 6.2 Fields
 
 | Field | Required | Type | Description |
@@ -246,9 +267,9 @@ const __mocEditorData = `
 | `memos` | **Required** | `MocEditorMemo[]` | Complete data for sticky-note memos |
 | `viewport` | Optional | `{ mode, width, height }` | Viewport settings |
 
-### 6.3 Escape Rules
+### 6.3 Escape Rules (Legacy Format Only)
 
-The following characters must be escaped inside the template literal JSON string:
+In the legacy raw JSON format (v1.0.0–1.1.0), the following characters must be escaped inside the template literal:
 
 | Character | Escaped Form |
 |-----------|-------------|
@@ -257,11 +278,7 @@ The following characters must be escaped inside the template literal JSON string
 
 The parser restores (unescapes) these before calling `JSON.parse`.
 
-### 6.4 JSON Formatting Rules
-
-- 2-space indentation
-- Line endings: LF
-- Trailing newline at end of file
+The Brotli compressed format (v1.2.0+) does not require escaping as the Base64 output contains no special characters.
 
 ---
 
@@ -297,6 +314,13 @@ The following tags have been deprecated. Parsers should ignore them when detecte
 
 This specification (v1.0.0 official release) does **not guarantee** backward compatibility with draft versions.
 Legacy-format files may not be correctly parsed by newer-version parsers.
+
+### 8.4 Editor Data Format Compatibility (v1.2.0)
+
+- Parsers **must** support both raw JSON (v1.0.0–1.1.0) and Brotli compressed (v1.2.0) editor data formats
+- The `brotli:` prefix is used to distinguish between the two formats
+- Serializers **should** always output the Brotli compressed format (v1.2.0+)
+- Files saved with v1.2.0+ can be opened by older parsers only if those parsers are updated to support Brotli decompression
 
 ---
 
