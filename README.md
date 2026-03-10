@@ -9,7 +9,7 @@
 
 | Version | Changes |
 |---------|---------|
-| 1.2.0 | Editor data block is now Brotli-compressed + Base64-encoded — drastically reduces file size for large craftState and prevents AI agents from accidentally reading raw JSON |
+| 1.2.0 | Editor data block is now Brotli-compressed + Base64-encoded — drastically reduces file size for large craftState and prevents AI agents from accidentally reading raw JSON. Added section delimiter markers (`@moc-imports-start/end`, `@moc-tsx-start/end`) for reliable section parsing |
 | 1.1.0 | Added `@moc-component` tag — embeds component prop schemas in the file header, making each file self-contained for AI agents |
 | 1.0.0 | Initial official release |
 
@@ -46,15 +46,21 @@ A `.moc` file consists of four main sections:
 │    (@moc-* tags)                │
 ├─────────────────────────────────┤
 │ 2. Import Block                 │  Optional
+│    /* @moc-imports-start */     │
 │    (ES module import statements)│
+│    /* @moc-imports-end */       │
 ├─────────────────────────────────┤
 │ 3. TSX Component                │  Required
+│    /* @moc-tsx-start */         │
 │    (export default function)    │
+│    /* @moc-tsx-end */           │
 ├─────────────────────────────────┤
 │ 4. Editor Data Block            │  Optional
 │    (const __mocEditorData = ``) │
 └─────────────────────────────────┘
 ```
+
+Each section (Import Block and TSX Component) is wrapped with delimiter markers (`/* @moc-*-start */` / `/* @moc-*-end */`) to enable reliable parsing. Parsers should use these markers for section detection. When markers are absent (legacy files), parsers may fall back to heuristic-based detection.
 
 ---
 
@@ -179,20 +185,23 @@ AI agents should use these schemas to interpret `craftState` node props without 
 
 ## 4. Import Block
 
-Standard ES module import statements.
+Standard ES module import statements. Since v1.2.0, the block is wrapped with delimiter markers.
 
 ```typescript
+/* @moc-imports-start */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+/* @moc-imports-end */
 ```
 
 ---
 
 ## 5. TSX Component
 
-A React component written in `export default function` format.
+A React component written in `export default function` format. Since v1.2.0, the block is wrapped with delimiter markers.
 
 ```typescript
+/* @moc-tsx-start */
 export default function LoginForm() {
   return (
     <>
@@ -206,6 +215,7 @@ export default function LoginForm() {
     </>
   );
 }
+/* @moc-tsx-end */
 ```
 
 ### 5.1 TSX Comment Conventions
@@ -315,12 +325,20 @@ The following tags have been deprecated. Parsers should ignore them when detecte
 This specification (v1.0.0 official release) does **not guarantee** backward compatibility with draft versions.
 Legacy-format files may not be correctly parsed by newer-version parsers.
 
-### 8.4 Editor Data Format Compatibility (v1.2.0)
+### 8.4 v1.2.0 Compatibility
 
+**Editor Data Format:**
 - Parsers **must** support both raw JSON (v1.0.0–1.1.0) and Brotli compressed (v1.2.0) editor data formats
 - The `brotli:` prefix is used to distinguish between the two formats
 - Serializers **should** always output the Brotli compressed format (v1.2.0+)
 - Files saved with v1.2.0+ can be opened by older parsers only if those parsers are updated to support Brotli decompression
+
+**Section Delimiter Markers:**
+- Since v1.2.0, the Import Block and TSX Component sections are wrapped with delimiter markers
+- Markers: `/* @moc-imports-start */` / `/* @moc-imports-end */` and `/* @moc-tsx-start */` / `/* @moc-tsx-end */`
+- Parsers **should** use these markers for reliable section splitting
+- When markers are absent (v1.0.0–1.1.0 files), parsers may fall back to heuristic-based detection
+- Serializers **should** always output delimiter markers (v1.2.0+)
 
 ---
 
@@ -341,9 +359,12 @@ Legacy-format files may not be correctly parsed by newer-version parsers.
  * @moc-viewport desktop
  *
  */
+/* @moc-imports-start */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+/* @moc-imports-end */
 
+/* @moc-tsx-start */
 export default function LoginForm() {
   return (
     <>
@@ -359,6 +380,7 @@ export default function LoginForm() {
     </>
   );
 }
+/* @moc-tsx-end */
 
 const __mocEditorData = `
 {
