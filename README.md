@@ -2,13 +2,14 @@
 
 [日本語](README_JP.md)
 
-- **Version:** 1.2.0
+- **Version:** 1.2.1
 - **Status:** Official Specification
 
 ### Version History
 
 | Version | Changes |
 |---------|---------|
+| 1.2.1 | Added `@moc-memos` block tag — lists all sticky-note memos at the top of the file header so AI agents never skip them. Each entry shows `[nodeId] Title:... Message:...`. Coexists with `@moc-memo` inline TSX comments (dual output is intentional) |
 | 1.2.0 | Editor data block is now Brotli-compressed + Base64-encoded — drastically reduces file size for large craftState and prevents AI agents from accidentally reading raw JSON. Added section delimiter markers (`@moc-imports-start/end`, `@moc-tsx-start/end`) for reliable section parsing |
 | 1.1.0 | Added `@moc-component` tag — embeds component prop schemas in the file header, making each file self-contained for AI agents |
 | 1.0.0 | Initial official release |
@@ -110,7 +111,8 @@ Metadata is written using `@moc-*` tags inside a JSDoc comment at the top of the
  *
  * AI Instruction Memos:
  *   Sticky-note instructions placed by the user on the canvas for AI agents.
- *   Each memo is written with a @moc-memo tag as a pair of target element ID and instruction text.
+ *   The @moc-memos block lists all memos (Title/Message format).
+ *   Each memo also appears as @moc-memo comments near the corresponding element in TSX.
  *   The AI should read these memos and apply corrections/suggestions to the corresponding elements.
  *
  * TSX Comment Conventions:
@@ -129,6 +131,7 @@ Metadata is written using `@moc-*` tags inside a JSDoc comment at the top of the
 | `@moc-theme` | Optional | `"light" \| "dark"` | `"light"` | Theme |
 | `@moc-layout` | Optional | `"flow" \| "absolute"` | `"flow"` | Layout mode |
 | `@moc-viewport` | Optional | `string` | `"desktop"` | `desktop`, `tablet`, `mobile`, or `WxH` format |
+| `@moc-memos` | Optional | Block | - | Memo summary block listing all sticky-note memos (v1.2.1) |
 | `@moc-memo` | Optional | - | - | AI instruction memo (multiple allowed) |
 | `@moc-component` | Optional | `string` (JSON) | - | Component prop schema (multiple allowed, one per component type) |
 
@@ -180,6 +183,30 @@ AI agents should use these schemas to interpret `craftState` node props without 
 - `#<targetElementId>`: ID that identifies an element within the TSX (the `id` attribute value)
 - `"instruction text"`: Instructions for the AI agent (enclosed in double quotes)
 - Multiple memos can be specified
+
+### 3.5 Memo Summary Block (@moc-memos) — v1.2.1
+
+A block tag that lists all sticky-note memos at the top of the file header, ensuring AI agents never skip them.
+
+```
+@moc-memos
+  [nodeId1] Title:Dialog specification Message:The assignee field opens a search dialog
+  [nodeId2] Title:Post-approval button behavior Message:Disable button after approval
+```
+
+**Format per line:**
+
+```
+[<nodeID>] Title:<title> Message:<message>
+```
+
+- `<nodeID>`: The Craft.js node ID that the memo is attached to. `_` is used when the memo has no target node.
+- `Title:<title>`: The memo title. Omitted when the title is empty.
+- `Message:<message>`: The memo body. Omitted when the body is empty.
+- If a memo targets multiple nodes, one line is output per node.
+- The block is omitted entirely when there are no memos.
+
+**Dual output:** The same memo content also appears as `{/* @moc-memo "..." */}` inline comments near the corresponding elements in TSX. This duplication is intentional — the header block provides an at-a-glance summary, while inline comments provide positional context.
 
 ---
 
@@ -340,6 +367,14 @@ Legacy-format files may not be correctly parsed by newer-version parsers.
 - When markers are absent (v1.0.0–1.1.0 files), parsers may fall back to heuristic-based detection
 - Serializers **should** always output delimiter markers (v1.2.0+)
 
+### 8.5 v1.2.1 Compatibility
+
+**Memo Summary Block (`@moc-memos`):**
+- Since v1.2.1, a `@moc-memos` block is output in the JSDoc header listing all sticky-note memos
+- Older parsers that do not recognize `@moc-memos` will safely ignore it per the unknown tag handling rule (§8.2)
+- The same memo content also appears as `{/* @moc-memo "..." */}` inline comments in TSX — older parsers can still read memos from these comments
+- Serializers **should** output the `@moc-memos` block when memos are present (v1.2.1+)
+
 ---
 
 ## 9. Complete File Example
@@ -352,11 +387,15 @@ Legacy-format files may not be correctly parsed by newer-version parsers.
  *
  * ...(header description omitted)...
  *
- * @moc-version 1.0.0
+ * @moc-version 1.2.1
  * @moc-intent Login form mockup
  * @moc-theme light
  * @moc-layout flow
  * @moc-viewport desktop
+ *
+ * @moc-memos
+ *   [node1] Title:Email validation Message:Email validation required
+ *   [node2] Title:Login button Message:Submit button for login action
  *
  */
 /* @moc-imports-start */
